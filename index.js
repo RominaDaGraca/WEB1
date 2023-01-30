@@ -45,8 +45,40 @@ app.post("/",(req,res)=>{
 
 
 app.get("/libros",(req,res)=>{
+    var conn=mysql.createConnection({
+        host:'localhost',
+        user:'root',
+        password:'',
+        database:'biblioteca'
+    });
+    conn.connect();
+    conn.query("select * from libros",(err,results, fields)=>{
+        let filas="";
+        for(let index=0; index< results.length; index ++){
+            const element = results[index];
+            filas+=`<tr><td>${element.codigo}</td>
+            <td>${element.titulo}</td>
+            <td>${element.genero}</td>
+            </tr>`;
 
-    res.send("hola que tal");
+        }
+
+        let tabla=`<table>
+        <thead>
+            <th>codigo</th>
+            <th>titulo</th>
+            <th>genero</th>
+        </thead>
+        <tbody>
+            <tr>
+               ${filas}
+            </tr>
+        </tbody>
+    </table>` ;
+        console.log(err);
+        console.log(results);
+        res.send(tabla);
+    })
 
 })
 app.listen(port, () => {
