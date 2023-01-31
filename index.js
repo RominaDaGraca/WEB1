@@ -6,12 +6,16 @@ const fs=require('fs');
 const app = express()
 const port = 3000
 
+//sirviendo archivos estaticos
+app.use(express.static('public'))
+
 app.use(bodyparser.urlencoded({ extended: false }))
 
 app.get('/', (req, res) => {
 let options={
     root:path.join(__dirname)
 }
+//CONECCION A LA BASE DE DATOS
 var conn=mysql.createConnection({
     host:'localhost',
     user:'root',
