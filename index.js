@@ -2,6 +2,7 @@ const express = require('express')
 const path =require('path');
 var mysql=require("mysql");
 var bodyparser=require("body-parser");
+const fs=require('fs');
 const app = express()
 const port = 3000
 
@@ -11,7 +12,36 @@ app.get('/', (req, res) => {
 let options={
     root:path.join(__dirname)
 }
-  res.sendFile("/views/index.html",options);
+var conn=mysql.createConnection({
+    host:'localhost',
+    user:'root',
+    password:'',
+    database:'biblioteca'
+});
+conn.connect();
+conn.query("select * from libros",(err,results, fields)=>{
+    let filas="";
+    for(let index=0; index< results.length; index ++){
+        const element = results[index];
+        filas+=`<tr>
+        <td>${element.idlibro}</td>
+        <td>${element.codigo}</td>
+        <td>${element.titulo}</td>
+        <td>${element.genero}</td>
+        </tr>`;
+
+    }
+    try{
+        const data=fs.readFileSync('./views/index.html', 'utf-8');
+        let contenido=data.replace("##libros_row", filas);
+        res.send (contenido);
+    }catch(err){
+        console.log(err);
+        res.send('Error 404')
+    }
+})
+
+  //res.sendFile("/views/index.html",options);
 })
 
 
